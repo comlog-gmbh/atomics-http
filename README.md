@@ -83,9 +83,6 @@ const file = fs.createWriteStream("file.txt");
 request.pipe(file);
 // OR request.pipe("file.txt");
 
-var request = httpSync.request('http://localhost/file.txt');
-request.pipe("file.txt");
-
 try {
 	var result = request.end();
 	// Body will be null
