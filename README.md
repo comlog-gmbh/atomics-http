@@ -32,7 +32,7 @@ try {
 }
 ```
 
-### Default http compatibility v
+### Default http compatibility 2
 ```javascript
 const ahttp = require('atomics-http').http;
 // OR 
