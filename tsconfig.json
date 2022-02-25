@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "es2016",
+		"module": "commonjs",
+		"lib": [
+			"es6",
+			"es2017.sharedmemory"
+		],
+		"allowJs": true,
+		"checkJs": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"outDir": "dist",
+		"rootDir": "src",
+		"sourceMap": true
+	},
+	"compileOnSave": false,
+	"exclude": [ "./**.js", "./**.bak.ts" ],
+	"include": [ "./src/*.ts" ]
+}
