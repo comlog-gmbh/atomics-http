@@ -1,6 +1,6 @@
 {
 	"name": "atomics-http",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "atomics-http is a Node.js extension that provides synchronous http calls.",
 	"main": "main.js",
 	"directories": {

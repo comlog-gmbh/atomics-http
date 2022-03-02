@@ -1,6 +1,6 @@
 # atomics-http
 atomics-http is a Node.js extension that provides synchronous http or https calls.
-No Dependency and very fast. Worker + Atomics based.
+No dependency and very fast. Worker and Atomics based.
 
 ## Installation
 ```shell
@@ -103,4 +103,4 @@ try {
 
 
 
-At the moment not supports Agend and Functions as Options
+At the moment not supports Agent and Functions as Options
