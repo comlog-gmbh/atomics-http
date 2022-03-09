@@ -7,7 +7,6 @@ import BufferWriter from "./BufferWriter";
 import RequestOptions from './RequestOptions';
 import {AgentAdapter, toAgentAdapter} from './AgentHandler';
 import {ServerResponse, Response} from './ServerResponse';
-import {Agent} from "http";
 
 var read_timeout = 90000;
 
