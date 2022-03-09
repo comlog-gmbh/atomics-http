@@ -1,25 +1,31 @@
-type RequestOptions = {
-	agent?: boolean;
-	auth?: string;
-	autoCloseWorker: false;
-	createConnection?: Function;
-	defaultPort?: number;
-	family?: number;
-	headers?: Object;
-	hints?: number;
-	host?: string;
-	hostname?: string;
-	insecureHTTPParser?: boolean;
-	localAddress?: string;
-	lookup?: Function;
-	maxHeaderSize?: number;
-	method?: string;
-	path?: string;
-	port?: number;
-	protocol?: string;
-	setHost?: boolean;
-	socketPath?: string;
-	timeout?: number;
-	url?: string;
+import {ClientRequestArgs, OutgoingHttpHeaders, Agent} from "http";
+import {AgentAdapter} from "./AgentHandler";
+import {LookupFunction, Socket} from "net";
+
+interface RequestOptions {
+	autoCloseWorker?: boolean;
+	url?:string;
+	signal?: AbortSignal | undefined;
+	protocol?: string | null | undefined;
+	host?: string | null | undefined;
+	hostname?: string | null | undefined;
+	family?: number | undefined;
+	port?: number | string | null | undefined;
+	defaultPort?: number | string | undefined;
+	localAddress?: string | undefined;
+	socketPath?: string | undefined;
+	maxHeaderSize?: number | undefined;
+	method?: string | undefined;
+	path?: string | null | undefined;
+	headers?: OutgoingHttpHeaders | undefined;
+	auth?: string | null | undefined;
+	agent?: AgentAdapter | Agent | boolean | undefined;
+	_defaultAgent?: Agent | undefined;
+	timeout?: number | undefined;
+	setHost?: boolean | undefined;
+	createConnection?: ((options: ClientRequestArgs, oncreate: (err: Error, socket: Socket) => void) => Socket) | undefined;
+	lookup?: LookupFunction | undefined;
 }
+
+
 export = RequestOptions;

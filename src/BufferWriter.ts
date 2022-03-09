@@ -51,6 +51,14 @@ class BufferWriter extends Duplex {
 		this.write(JSON.stringify(obj));
 	}
 
+	writeError (err: Error) {
+		this.writeJSON({
+			name: err.name,
+			message: err.message,
+			stack: err.stack
+		});
+	}
+
 	_write (chunk: any, encoding: string, done: Function) {
 		this.data = Buffer.concat([this.data, chunk]);
 		this.length = this.data.length;

@@ -17,6 +17,6 @@
 		"sourceMap": true
 	},
 	"compileOnSave": false,
-	"exclude": [ "./**.js", "./**.bak.ts" ],
-	"include": [ "./src/*.ts" ]
+	"exclude": [ "./**.js", "./src/**/*.bak.ts" ],
+	"include": [ "./src/**/*.ts" ]
 }

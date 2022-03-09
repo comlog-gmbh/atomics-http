@@ -2,6 +2,14 @@
 atomics-http is a Node.js extension that provides synchronous http or https calls.
 No dependency and very fast. Worker and Atomics based.
 
+## Changes
+Added Agent support (RC1) for:
+ - proxy-agent: https://www.npmjs.com/package/proxy-agent
+ - http-proxy-agent: https://www.npmjs.com/package/http-proxy-agent
+ - https-proxy-agent: https://www.npmjs.com/package/https-proxy-agent
+ - http-cache-agent: https://www.npmjs.com/package/http-cache-agent
+ - Buildin http and https Agent: https://nodejs.org/api/http.html#new-agentoptions
+
 ## Installation
 ```shell
 npm install atomics-http
@@ -103,4 +111,4 @@ try {
 
 
 
-At the moment not supports Agent and Functions as Options
+At the moment not supports Functions in options

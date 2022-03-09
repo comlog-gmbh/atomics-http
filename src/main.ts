@@ -2,10 +2,12 @@ import {Writable} from "stream";
 import cleanup from "./cleanup";
 import {Worker} from "worker_threads";
 import Path from 'path';
-import fs from 'fs';
+import FS from 'fs';
 import BufferWriter from "./BufferWriter";
 import RequestOptions from './RequestOptions';
+import {AgentAdapter, toAgentAdapter} from './AgentHandler';
 import {ServerResponse, Response} from './ServerResponse';
+import {Agent} from "http";
 
 var read_timeout = 90000;
 
@@ -139,6 +141,10 @@ class ClientRequest {
 			_cleanup_shared_array(bufArray[i].array);
 		}
 
+		if (typeof this.options.agent != "undefined") {
+			this.options.agent = toAgentAdapter(this.options.agent);
+		}
+
 		worker.postMessage({cmd: 'request', protocol: this.protocol, options: this.options});
 		if (Atomics.wait(controlBufferArray, 0, 0, this.timeout) === 'timed-out') {
 			throw "Transfer request options error";
@@ -239,7 +245,7 @@ class ClientRequest {
 	 * @param {stream::Writable|fs::WriteStream|String} writable Writable or Filepath
 	 */
 	public pipe(writable: Writable|String) {
-		if (typeof writable == "string") writable = fs.createWriteStream(writable);
+		if (typeof writable == "string") writable = FS.createWriteStream(writable);
 		if (writable instanceof Writable) this.writer = writable;
 		else throw "Pipe is not instance of Writable or file is not exists";
 	}

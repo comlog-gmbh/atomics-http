@@ -44,6 +44,13 @@ class BufferWriter extends stream_1.Duplex {
     writeJSON(obj) {
         this.write(JSON.stringify(obj));
     }
+    writeError(err) {
+        this.writeJSON({
+            name: err.name,
+            message: err.message,
+            stack: err.stack
+        });
+    }
     _write(chunk, encoding, done) {
         this.data = Buffer.concat([this.data, chunk]);
         this.length = this.data.length;

@@ -8,6 +8,7 @@ const worker_threads_1 = require("worker_threads");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const BufferWriter_1 = __importDefault(require("./BufferWriter"));
+const AgentHandler_1 = require("./AgentHandler");
 var read_timeout = 90000;
 // Shared memory
 const bufArray = {
@@ -124,6 +125,9 @@ class ClientRequest {
         for (let i in bufArray) {
             _cleanup_shared_array(bufArray[i].array);
         }
+        if (typeof this.options.agent != "undefined") {
+            this.options.agent = (0, AgentHandler_1.toAgentAdapter)(this.options.agent);
+        }
         worker.postMessage({ cmd: 'request', protocol: this.protocol, options: this.options });
         if (Atomics.wait(controlBufferArray, 0, 0, this.timeout) === 'timed-out') {
             throw "Transfer request options error";
@@ -221,7 +225,7 @@ class ClientRequest {
     }
     /**
      * Set this before end function
-     * @param {module:stream:Writable|module:fs:WriteStream|String} writable Writable or Filepath
+     * @param {stream::Writable|fs::WriteStream|String} writable Writable or Filepath
      */
     pipe(writable) {
         if (typeof writable == "string")

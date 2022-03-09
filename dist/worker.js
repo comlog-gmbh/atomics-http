@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const worker_threads_1 = require("worker_threads");
 const BufferWriter_1 = __importDefault(require("./BufferWriter"));
+const AgentHandler_1 = require("./AgentHandler");
 const response_fields = {
     httpVersionMajor: null,
     httpVersionMinor: null,
@@ -53,6 +54,17 @@ if (worker_threads_1.parentPort) {
                     console.error("No shared memory object");
                     return;
                 }
+                if (data.options.agent) {
+                    try {
+                        data.options.agent = (0, AgentHandler_1.adapterToAgent)(data.options.agent);
+                    }
+                    catch (e) {
+                        bufArray.error.writer.writeError(e);
+                        Atomics.store(controlBufferArray, 0, 1);
+                        Atomics.notify(controlBufferArray, 0, 1);
+                        return;
+                    }
+                }
                 request_ended = false;
                 response = null;
                 let client = data.protocol.indexOf('https') > -1 ? require('https') : require('http');
@@ -68,7 +80,7 @@ if (worker_threads_1.parentPort) {
                         res.pause();
                     });
                     res.on('error', function (err) {
-                        bufArray.error.writer.writeJSON(err);
+                        bufArray.error.writer.writeError(err);
                         request_ended = true;
                     });
                     res.on('end', function () {
@@ -81,7 +93,7 @@ if (worker_threads_1.parentPort) {
                     }
                 });
                 request.on('error', error => {
-                    bufArray.error.writer.writeJSON(error);
+                    bufArray.error.writer.writeError(error);
                     request_ended = true;
                     if (controlBufferArray) {
                         Atomics.store(controlBufferArray, 0, 1);

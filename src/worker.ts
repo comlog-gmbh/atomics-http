@@ -1,6 +1,7 @@
 import {ClientRequest, IncomingMessage} from "http";
 import {parentPort, workerData} from "worker_threads";
 import BufferWriter from './BufferWriter';
+import {adapterToAgent} from './AgentHandler';
 
 const response_fields = {
 	httpVersionMajor: null,
@@ -60,6 +61,18 @@ if (parentPort) {
 					return;
 				}
 
+				if (data.options.agent) {
+					try {
+						data.options.agent = adapterToAgent(data.options.agent);
+					}
+					catch (e) {
+						bufArray.error.writer.writeError(e as Error);
+						Atomics.store(controlBufferArray, 0, 1);
+						Atomics.notify(controlBufferArray, 0, 1);
+						return;
+					}
+				}
+
 				request_ended = false;
 				response = null;
 				let client = data.protocol.indexOf('https') > -1 ? require('https') : require('http');
@@ -75,7 +88,7 @@ if (parentPort) {
 						res.pause();
 					});
 					res.on('error', function (err) {
-						bufArray.error.writer.writeJSON(err);
+						bufArray.error.writer.writeError(err);
 						request_ended = true;
 					});
 					res.on('end', function () {
@@ -89,7 +102,7 @@ if (parentPort) {
 					}
 				});
 				request.on('error', error => {
-					bufArray.error.writer.writeJSON(error);
+					bufArray.error.writer.writeError(error);
 					request_ended = true;
 					if (controlBufferArray) {
 						Atomics.store(controlBufferArray, 0, 1);
