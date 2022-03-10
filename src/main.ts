@@ -296,7 +296,8 @@ class AtomicsHTTP {
 }
 
 export = {
-	constructor: AtomicsHTTP,
+	AtomicsHTTP: AtomicsHTTP,
+	ClientRequest: ClientRequest,
 	http: new AtomicsHTTP('http'),
 	https: new AtomicsHTTP('https'),
 };
