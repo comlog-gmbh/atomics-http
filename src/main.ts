@@ -120,6 +120,8 @@ function _cleanup_shared_array(sharedArray?: Int32Array) {
 	for (let i=0; i < sharedArray.length; i++) Atomics.store(sharedArray, i, 0);
 }
 
+var autocloseTimeout: NodeJS.Timeout;
+
 class ClientRequest {
 	public options: RequestOptions = {} as RequestOptions;
 	public protocol: string = 'http';
@@ -254,6 +256,7 @@ class ClientRequest {
 	 * @return {Response} Objekt {response: ..., body:...}
 	 */
 	public end() : Response {
+		clearTimeout(autocloseTimeout);
 		_start_worker();
 		if (!this.writer) this.writer = new BufferWriter();
 		this._request();
@@ -267,7 +270,12 @@ class ClientRequest {
 
 		this.writer = null;
 
-		if (this.options.autoCloseWorker) _close_worker();
+		if (this.options.autoCloseWorker) {
+			if (typeof this.options.autoCloseWorker == 'number') {
+				autocloseTimeout = setTimeout (_close_worker, this.options.autoCloseWorker);
+			}
+			_close_worker();
+		}
 		return result
 	}
 
@@ -282,6 +290,8 @@ class ClientRequest {
 
 class AtomicsHTTP {
 	private protocol: string = 'http';
+	public autoCloseWorker = false;
+
 	constructor(protocol?: string) {
 		if (protocol) this.protocol = protocol;
 	}
@@ -290,6 +300,7 @@ class AtomicsHTTP {
 		let client = new ClientRequest();
 		client.protocol = this.protocol;
 		let cres = cleanup(url, options);
+		if (typeof cres.options.autoCloseWorker == "undefined") cres.options.autoCloseWorker = this.autoCloseWorker;
 		client.options = cres.options;
 		return client;
 	}

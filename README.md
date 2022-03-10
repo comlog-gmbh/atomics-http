@@ -3,12 +3,16 @@ atomics-http is a Node.js extension that provides synchronous http or https call
 No dependency and very fast. Worker and Atomics based.
 
 ## Changes
-Added Agent support (RC1) for:
- - proxy-agent: https://www.npmjs.com/package/proxy-agent
- - http-proxy-agent: https://www.npmjs.com/package/http-proxy-agent
- - https-proxy-agent: https://www.npmjs.com/package/https-proxy-agent
- - http-cache-agent: https://www.npmjs.com/package/http-cache-agent
- - Buildin http and https Agent: https://nodejs.org/api/http.html#new-agentoptions
+* Option autoClose Worker can also be a number. In this case it means 
+that the worker will be closed if no more requests have been sent after 
+"n" milliseconds.
+---
+* Added Agent support (RC1) for:
+  - proxy-agent: https://www.npmjs.com/package/proxy-agent
+  - http-proxy-agent: https://www.npmjs.com/package/http-proxy-agent
+  - https-proxy-agent: https://www.npmjs.com/package/https-proxy-agent
+  - http-cache-agent: https://www.npmjs.com/package/http-cache-agent
+  - Buildin http and https Agent: https://nodejs.org/api/http.html#new-agentoptions
 
 ## Installation
 ```shell
@@ -101,6 +105,9 @@ try {
 	console.error(e);
 }
 ```
+
+## ExtraOptions
+* autoCloseWorker => bool (false = no close, true = close after end) or int (milliseconds)
 
 ## Benchmark 100 Requests
 | Method          | Time    |

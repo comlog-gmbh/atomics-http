@@ -6,6 +6,9 @@ var ProxyAgentS = require('https-proxy-agent');
 var ProxyAgent2 = require('proxy-agent');
 const https = require("https");
 
+httpSync.autoCloseWorker = 3000;
+httpsSync.autoCloseWorker = 3000;
+
 // Text Request HTTP
 /*
 var pa = new ProxyAgent('http://127.0.0.1:8118/');
@@ -22,14 +25,14 @@ console.info(result.response);
 
 // Text Request HTTPS
 //var pa = new ProxyAgentS('http://127.0.0.1:8118/');
-var pa = new ProxyAgent2('http://127.0.0.1:8118/');
+//var pa = new ProxyAgent2('http://127.0.0.1:8118/');
 /*var pa = new https.Agent({
 	timeout: 999
 });*/
-var ca = CacheAgent.auto(null, pa);
+//var ca = CacheAgent.auto(null, pa);
 var req = httpsSync.request(
 	'https://localtest.speedorder.de/_index.html',
-	{agent: pa}
+	//{agent: ca}
 );
 
 var result = req.end();

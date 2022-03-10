@@ -3,7 +3,7 @@ import {AgentAdapter} from "./AgentHandler";
 import {LookupFunction, Socket} from "net";
 
 interface RequestOptions {
-	autoCloseWorker?: boolean;
+	autoCloseWorker?: boolean|number;
 	url?:string;
 	signal?: AbortSignal | undefined;
 	protocol?: string | null | undefined;

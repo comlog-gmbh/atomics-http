@@ -105,6 +105,7 @@ function _cleanup_shared_array(sharedArray) {
     for (let i = 0; i < sharedArray.length; i++)
         Atomics.store(sharedArray, i, 0);
 }
+var autocloseTimeout;
 class ClientRequest {
     constructor() {
         this.options = {};
@@ -240,6 +241,7 @@ class ClientRequest {
      * @return {Response} Objekt {response: ..., body:...}
      */
     end() {
+        clearTimeout(autocloseTimeout);
         _start_worker();
         if (!this.writer)
             this.writer = new BufferWriter_1.default();
@@ -252,8 +254,12 @@ class ClientRequest {
             result.body = this.writer.toBuffer();
         }
         this.writer = null;
-        if (this.options.autoCloseWorker)
+        if (this.options.autoCloseWorker) {
+            if (typeof this.options.autoCloseWorker == 'number') {
+                autocloseTimeout = setTimeout(_close_worker, this.options.autoCloseWorker);
+            }
             _close_worker();
+        }
         return result;
     }
     closeWorker() {
@@ -266,6 +272,7 @@ class ClientRequest {
 class AtomicsHTTP {
     constructor(protocol) {
         this.protocol = 'http';
+        this.autoCloseWorker = false;
         if (protocol)
             this.protocol = protocol;
     }
@@ -273,6 +280,8 @@ class AtomicsHTTP {
         let client = new ClientRequest();
         client.protocol = this.protocol;
         let cres = (0, cleanup_1.default)(url, options);
+        if (typeof cres.options.autoCloseWorker == "undefined")
+            cres.options.autoCloseWorker = this.autoCloseWorker;
         client.options = cres.options;
         return client;
     }
