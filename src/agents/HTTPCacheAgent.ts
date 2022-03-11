@@ -4,7 +4,7 @@ import * as https from "https";
 
 interface HCA extends http.Agent, https.Agent{
 	agent?: any,
-	path: string,
+	filepath: string,
 	prefix: string,
 	cache: Object,
 }
@@ -15,7 +15,7 @@ interface CacheAgentAdapter extends AgentAdapter {
 
 export = function (agent: HCA, constructor: string) : CacheAgentAdapter {
 	let options = {
-		filepath: agent.path,
+		filepath: agent.filepath,
 		prefix: agent.prefix,
 		agent: toAgentAdapter(agent.agent)
 	};
