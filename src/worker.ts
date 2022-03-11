@@ -106,6 +106,7 @@ if (parentPort) {
 					bufArray.response.writer.writeJSON(custom_response);
 
 					res.on('data', function (chunk) {
+						//console.info('*** data');
 						bufArray.body.writer.write(chunk);
 						res.pause();
 					});
@@ -113,6 +114,9 @@ if (parentPort) {
 						bufArray.error.writer.writeError(err);
 						request_ended = true;
 					});
+					res.on('close', function () {
+						request_ended = true;
+					})
 					res.on('end', function () {
 						request_ended = true;
 					});
@@ -164,7 +168,9 @@ if (parentPort) {
 					}
 				}
 
-				if (bufArray.body.writer.length < 1) response?.resume();
+				if (bufArray.body.writer.length < 1) {
+					response?.resume();
+				}
 
 				Atomics.store(controlBufferArray, 0, 1);
 				Atomics.notify(controlBufferArray, 0, 1);

@@ -161,11 +161,12 @@ class ClientRequest {
         let complete = true, row, type, i;
         do {
             /*if (debug) {
-                console.info('Transfer LOOP (' +
-                    'Error: '+eset.ended.toString()+', ' +
-                    'Body: '+bset.ended.toString()+', ' +
-                    'Response: '+rset.ended.toString()+
-                    ')');
+                let msg = 'Transfer LOOP (';
+                for (type in bufArray) {
+                    msg += type.toUpperCase() + ': ' + bufArray[type].toString();
+                }
+                msg += ')';
+                console.info(msg);
             }*/
             if (worker_error)
                 throw worker_error;

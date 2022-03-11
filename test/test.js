@@ -29,6 +29,7 @@ console.info(result.response);
 /*var pa = new https.Agent({
 	timeout: 999
 });*/
+/*
 //var ca = CacheAgent.auto(null, pa);
 var req = httpsSync.request(
 	'https://localtest.speedorder.de/_index.html',
