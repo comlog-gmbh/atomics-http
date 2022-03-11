@@ -86,7 +86,7 @@ function _start_worker() {
 		});
 
 		worker.stdout.on('data', function (data) {
-			console.info(data);
+			console.info(data.toString());
 		});
 		worker.stderr.on('data', function (data) {
 			worker_error = new Error(data.toString());
