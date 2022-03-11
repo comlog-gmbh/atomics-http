@@ -54,15 +54,37 @@ if (worker_threads_1.parentPort) {
                     console.error("No shared memory object");
                     return;
                 }
-                if (data.options.agent) {
-                    try {
-                        data.options.agent = (0, AgentHandler_1.adapterToAgent)(data.options.agent);
+                if (data.options) {
+                    // Funktonen übernahme
+                    for (let i in data.options) {
+                        if (i == 'agent')
+                            continue;
+                        if (typeof data.options[i] == 'string' &&
+                            data.options[i].substring(0, 8) == 'function' &&
+                            data.options[i].match(/^function\s*\(.*/)) {
+                            try {
+                                let tmp;
+                                data.options[i] = eval('tmp = ' + data.options[i]);
+                            }
+                            catch (e) {
+                                bufArray.error.writer.writeError(e);
+                                Atomics.store(controlBufferArray, 0, 1);
+                                Atomics.notify(controlBufferArray, 0, 1);
+                                return;
+                            }
+                        }
                     }
-                    catch (e) {
-                        bufArray.error.writer.writeError(e);
-                        Atomics.store(controlBufferArray, 0, 1);
-                        Atomics.notify(controlBufferArray, 0, 1);
-                        return;
+                    // Agent übernahme
+                    if (data.options.agent) {
+                        try {
+                            data.options.agent = (0, AgentHandler_1.adapterToAgent)(data.options.agent);
+                        }
+                        catch (e) {
+                            bufArray.error.writer.writeError(e);
+                            Atomics.store(controlBufferArray, 0, 1);
+                            Atomics.notify(controlBufferArray, 0, 1);
+                            return;
+                        }
                     }
                 }
                 request_ended = false;

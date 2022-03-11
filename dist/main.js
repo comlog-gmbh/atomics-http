@@ -109,7 +109,7 @@ var autocloseTimeout;
 class ClientRequest {
     constructor() {
         this.options = {};
-        this.protocol = 'http';
+        this.protocol = 'http:';
         this.writer = null;
         this.timeout = read_timeout;
     }
@@ -126,8 +126,16 @@ class ClientRequest {
         for (let i in bufArray) {
             _cleanup_shared_array(bufArray[i].array);
         }
-        if (typeof this.options.agent != "undefined") {
-            this.options.agent = (0, AgentHandler_1.toAgentAdapter)(this.options.agent);
+        for (let i in this.options) {
+            if (i == 'agent' && typeof this.options[i] != "undefined") {
+                this.options.agent = (0, AgentHandler_1.toAgentAdapter)(this.options.agent);
+            }
+            else { // @ts-ignore
+                if (typeof this.options[i] == 'function') {
+                    // @ts-ignore
+                    this.options[i] = this.options[i].toString();
+                }
+            }
         }
         worker.postMessage({ cmd: 'request', protocol: this.protocol, options: this.options });
         if (Atomics.wait(controlBufferArray, 0, 0, this.timeout) === 'timed-out') {
@@ -241,7 +249,8 @@ class ClientRequest {
      * @return {Response} Objekt {response: ..., body:...}
      */
     end() {
-        clearTimeout(autocloseTimeout);
+        if (autocloseTimeout)
+            clearTimeout(autocloseTimeout);
         _start_worker();
         if (!this.writer)
             this.writer = new BufferWriter_1.default();
@@ -271,7 +280,7 @@ class ClientRequest {
 }
 class AtomicsHTTP {
     constructor(protocol) {
-        this.protocol = 'http';
+        this.protocol = 'http:';
         this.autoCloseWorker = false;
         if (protocol)
             this.protocol = protocol;
@@ -289,7 +298,7 @@ class AtomicsHTTP {
 module.exports = {
     AtomicsHTTP: AtomicsHTTP,
     ClientRequest: ClientRequest,
-    http: new AtomicsHTTP('http'),
-    https: new AtomicsHTTP('https'),
+    http: new AtomicsHTTP('http:'),
+    https: new AtomicsHTTP('https:'),
 };
 //# sourceMappingURL=main.js.map

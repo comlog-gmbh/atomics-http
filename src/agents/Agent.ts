@@ -16,8 +16,12 @@ export = function (agent: A, constructor: string) : DefaultAgentAdapter {
 		options: agent.options,
 		construct: function () {
 			let cli;
-			if (this.protocol == 'https') cli = require('https');
-			else cli = require('http');
+			if (this.protocol.indexOf('https') > -1) {
+				cli = require('https');
+			}
+			else {
+				cli = require('http');
+			}
 			return new cli.Agent(this.options);
 		}
 	};

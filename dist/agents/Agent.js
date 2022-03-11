@@ -5,10 +5,12 @@ module.exports = function (agent, constructor) {
         options: agent.options,
         construct: function () {
             let cli;
-            if (this.protocol == 'https')
+            if (this.protocol.indexOf('https') > -1) {
                 cli = require('https');
-            else
+            }
+            else {
                 cli = require('http');
+            }
             return new cli.Agent(this.options);
         }
     };

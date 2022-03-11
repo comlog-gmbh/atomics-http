@@ -124,7 +124,7 @@ var autocloseTimeout: NodeJS.Timeout;
 
 class ClientRequest {
 	public options: RequestOptions = {} as RequestOptions;
-	public protocol: string = 'http';
+	public protocol: string = 'http:';
 	public writer : Writable | null = null;
 	public timeout = read_timeout;
 
@@ -142,8 +142,16 @@ class ClientRequest {
 			_cleanup_shared_array(bufArray[i].array);
 		}
 
-		if (typeof this.options.agent != "undefined") {
-			this.options.agent = toAgentAdapter(this.options.agent);
+		for (let i in this.options) {
+			if (i == 'agent' && typeof this.options[i] != "undefined") {
+				this.options.agent = toAgentAdapter(this.options.agent);
+			}
+			else { // @ts-ignore
+				if (typeof this.options[i] == 'function') {
+					// @ts-ignore
+					this.options[i] = this.options[i].toString();
+				}
+			}
 		}
 
 		worker.postMessage({cmd: 'request', protocol: this.protocol, options: this.options});
@@ -256,7 +264,7 @@ class ClientRequest {
 	 * @return {Response} Objekt {response: ..., body:...}
 	 */
 	public end() : Response {
-		clearTimeout(autocloseTimeout);
+		if (autocloseTimeout) clearTimeout(autocloseTimeout);
 		_start_worker();
 		if (!this.writer) this.writer = new BufferWriter();
 		this._request();
@@ -289,7 +297,7 @@ class ClientRequest {
 }
 
 class AtomicsHTTP {
-	private protocol: string = 'http';
+	private protocol: string = 'http:';
 	public autoCloseWorker = false;
 
 	constructor(protocol?: string) {
@@ -309,6 +317,6 @@ class AtomicsHTTP {
 export = {
 	AtomicsHTTP: AtomicsHTTP,
 	ClientRequest: ClientRequest,
-	http: new AtomicsHTTP('http'),
-	https: new AtomicsHTTP('https'),
+	http: new AtomicsHTTP('http:'),
+	https: new AtomicsHTTP('https:'),
 };

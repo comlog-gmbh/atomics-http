@@ -3,7 +3,9 @@ atomics-http is a Node.js extension that provides synchronous http or https call
 No dependency and very fast. Worker and Atomics based.
 
 ## Changes
-* Option autoClose Worker can also be a number. In this case it means 
+* 2022-03-11 Added support for Functions (using eval)
+* 2022-03-11 Bugfixes
+* 2022-03-10 Option autoClose Worker can also be a number. In this case it means 
 that the worker will be closed if no more requests have been sent after 
 "n" milliseconds.
 ---
@@ -28,7 +30,7 @@ const ahttp = require('atomics-http').http;
 var request = ahttp.request({
     method: 'GET',
     headers: {},
-    protocol: 'http',
+    protocol: 'http:',
     host: '127.0.0.1',
     port: 80,
     path: '/'

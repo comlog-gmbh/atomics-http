@@ -46,7 +46,6 @@ const block_end = workerData.block_end || 1000;
 const chunk_end = workerData.chunk_end || 999;
 const debug = workerData.debug || false;
 var request_ended = false;
-
 var response : IncomingMessage | null = null;
 var request : ClientRequest;
 
@@ -61,15 +60,38 @@ if (parentPort) {
 					return;
 				}
 
-				if (data.options.agent) {
-					try {
-						data.options.agent = adapterToAgent(data.options.agent);
+				if (data.options) {
+					// Funktonen übernahme
+					for (let i in data.options) {
+						if (i == 'agent') continue;
+						if (
+							typeof data.options[i] == 'string' &&
+							data.options[i].substring(0, 8) == 'function' &&
+							data.options[i].match(/^function\s*\(.*/)
+						) {
+							try {
+								let tmp;
+								data.options[i] = eval('tmp = ' + data.options[i]);
+							} catch (e) {
+								bufArray.error.writer.writeError(e as Error);
+								Atomics.store(controlBufferArray, 0, 1);
+								Atomics.notify(controlBufferArray, 0, 1);
+								return;
+							}
+						}
 					}
-					catch (e) {
-						bufArray.error.writer.writeError(e as Error);
-						Atomics.store(controlBufferArray, 0, 1);
-						Atomics.notify(controlBufferArray, 0, 1);
-						return;
+
+					// Agent übernahme
+					if (data.options.agent) {
+						try {
+							data.options.agent = adapterToAgent(data.options.agent);
+						}
+						catch (e) {
+							bufArray.error.writer.writeError(e as Error);
+							Atomics.store(controlBufferArray, 0, 1);
+							Atomics.notify(controlBufferArray, 0, 1);
+							return;
+						}
 					}
 				}
 

@@ -25,6 +25,9 @@ function cleanup(url, options) {
                 options = {};
             for (i in parsed) {
                 // @ts-ignore
+                if (typeof parsed[i] == 'function')
+                    continue;
+                // @ts-ignore
                 if (typeof res.options[i] == "undefined")
                     res.options[i] = parsed[i];
             }
