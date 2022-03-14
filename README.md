@@ -86,6 +86,24 @@ try {
 }
 ```
 
+### Autoclose worker by inactivity
+```javascript
+const ahttp = require('atomics-http').http;
+// OR 
+// const ahttps = require('atomics-http').https;
+var time = 10000; // 10 Seconds 
+var request = ahttp.request('http://localhost/', {autoCloseWorker: time});
+
+try {
+	var result = request.end();
+	console.info(result.body.toString());
+	console.info(result.response);
+	// Close worker manualy request.closeWorker();
+} catch (e) {
+	console.error(e);
+}
+```
+
 ### POST Request
 ```javascript
 var params = new URLSearchParams({
