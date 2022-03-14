@@ -112,6 +112,7 @@ class ClientRequest {
         this.protocol = 'http:';
         this.writer = null;
         this.timeout = read_timeout;
+        this.writeData = [];
     }
     _request() {
         if (!worker)
@@ -137,7 +138,12 @@ class ClientRequest {
                 }
             }
         }
-        worker.postMessage({ cmd: 'request', protocol: this.protocol, options: this.options });
+        worker.postMessage({
+            cmd: 'request',
+            protocol: this.protocol,
+            options: this.options,
+            write: this.writeData
+        });
         if (Atomics.wait(controlBufferArray, 0, 0, this.timeout) === 'timed-out') {
             throw "Transfer request options error";
         }
@@ -244,6 +250,9 @@ class ClientRequest {
             this.writer = writable;
         else
             throw "Pipe is not instance of Writable or file is not exists";
+    }
+    write(chunk, encoding) {
+        this.writeData.push({ chunk: chunk, encoding: encoding });
     }
     /**
      * Send request

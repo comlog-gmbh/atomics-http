@@ -126,6 +126,12 @@ if (worker_threads_1.parentPort) {
                         Atomics.notify(controlBufferArray, 0, 1);
                     }
                 });
+                if (data.write) {
+                    for (let w in data.write) {
+                        let row = data.write[w];
+                        request.write(row.chunk, row.encoding);
+                    }
+                }
                 request.end();
                 break;
             case 'pipe':

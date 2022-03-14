@@ -3,6 +3,7 @@ atomics-http is a Node.js extension that provides synchronous http or https call
 No dependency and very fast. Worker and Atomics based.
 
 ## Changes
+* 2022-03-14 Added write function for POST requests
 * 2022-03-11 Added support for Functions (using eval)
 * 2022-03-11 Bugfixes
 * 2022-03-10 Option autoClose Worker can also be a number. In this case it means 
@@ -83,6 +84,29 @@ try {
 } catch (e) {
 	console.error(e);
 }
+```
+
+### POST Request
+```javascript
+var params = new URLSearchParams({
+	'tset1' : 'test%*&',
+	'test2': true,
+	'test3': 123
+})
+var post_data = params.toString();
+
+var req = httpSync.request({
+	url: 'http://localhost/example.php',
+	method: 'POST',
+	headers: {
+		'Content-Type': 'application/x-www-form-urlencoded',
+		'Content-Length': Buffer.byteLength(post_data)
+	}
+});
+req.write(post_data);
+var result = req.end();
+console.info(result.body.toString());
+console.info(result.response);
 ```
 
 ### Download file

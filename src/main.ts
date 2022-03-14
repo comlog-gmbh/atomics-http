@@ -18,6 +18,11 @@ type BufferBlock = {
 	writer?: Writable | BufferWriter;
 };
 
+type WriteData = {
+	chunk: string|Buffer;
+	encoding?: string;
+}
+
 // Shared memory
 const bufArray: {[index: string]:BufferBlock} = {
 	error: {
@@ -127,6 +132,7 @@ class ClientRequest {
 	public protocol: string = 'http:';
 	public writer : Writable | null = null;
 	public timeout = read_timeout;
+	private writeData: WriteData[] = [];
 
 	constructor() {}
 
@@ -154,7 +160,12 @@ class ClientRequest {
 			}
 		}
 
-		worker.postMessage({cmd: 'request', protocol: this.protocol, options: this.options});
+		worker.postMessage({
+			cmd: 'request',
+			protocol: this.protocol,
+			options: this.options,
+			write: this.writeData
+		});
 		if (Atomics.wait(controlBufferArray, 0, 0, this.timeout) === 'timed-out') {
 			throw "Transfer request options error";
 		}
@@ -258,6 +269,10 @@ class ClientRequest {
 		if (typeof writable == "string") writable = FS.createWriteStream(writable);
 		if (writable instanceof Writable) this.writer = writable;
 		else throw "Pipe is not instance of Writable or file is not exists";
+	}
+
+	public write(chunk: string|Buffer, encoding?: string) {
+		this.writeData.push({chunk: chunk, encoding: encoding});
 	}
 
 	/**

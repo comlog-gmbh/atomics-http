@@ -136,6 +136,13 @@ if (parentPort) {
 					}
 				});
 
+				if (data.write) {
+					for (let w in data.write) {
+						let row = data.write[w];
+						request.write(row.chunk, row.encoding);
+					}
+				}
+
 				request.end();
 				break;
 			case 'pipe':
