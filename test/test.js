@@ -4,7 +4,26 @@ var CacheAgent = require('http-cache-agent');
 var ProxyAgent = require('http-proxy-agent');
 var ProxyAgentS = require('https-proxy-agent');
 var ProxyAgent2 = require('proxy-agent');
-const https = require("https");
+
+/*
+var http = require('http');
+var req = http.request({
+		hostname: 'localtest.speedorder.de',
+		port: 80,
+		path: '/ar/index.php',
+		method: 'GET',
+		timeout: 3000
+	},
+	function (res) {
+	console.info(res);
+});
+
+req.on('error', err => {
+	console.error(err);
+	console.error(err+'');
+});
+req.end();
+/**/
 
 httpSync.autoCloseWorker = 3000;
 httpsSync.autoCloseWorker = 3000;
@@ -13,19 +32,24 @@ var post_data = (new URLSearchParams({
 	'test2': true,
 	'test3': 123
 })).toString();
-
-var req = httpSync.request({
-	url: 'http://localtest.speedorder.de/ar/index.php',
-	method: 'POST',
-	headers: {
-		'Content-Type': 'application/x-www-form-urlencoded',
-		'Content-Length': Buffer.byteLength(post_data)
-	}
-});
-req.write(post_data);
-var result = req.end();
-console.info(result.body.toString());
-console.info(result.response);
+try {
+	var req = httpSync.request({
+		url: 'http://localtest.speedorder.de/ar/index.php',
+		method: 'POST',
+		readTimeout: 3000,
+		headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'Content-Length': Buffer.byteLength(post_data)
+		}
+	});
+	req.write(post_data);
+	var result = req.end();
+	console.info(result.body.toString());
+	console.info(result.response);
+} catch (e) {
+	console.error(e);
+	console.error(e+'');
+}
 
 // Text Request HTTP
 /*

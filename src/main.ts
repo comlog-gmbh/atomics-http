@@ -8,8 +8,6 @@ import RequestOptions from './RequestOptions';
 import {AgentAdapter, toAgentAdapter} from './AgentHandler';
 import {ServerResponse, Response} from './ServerResponse';
 
-var read_timeout = 90000;
-
 type BufferBlock = {
 	length: number;
 	end: boolean;
@@ -131,7 +129,8 @@ class ClientRequest {
 	public options: RequestOptions = {} as RequestOptions;
 	public protocol: string = 'http:';
 	public writer : Writable | null = null;
-	public timeout = read_timeout;
+	public read_timeout = 10000;
+	public timeout : number | undefined = undefined;
 	private writeData: WriteData[] = [];
 
 	constructor() {}
@@ -164,9 +163,10 @@ class ClientRequest {
 			cmd: 'request',
 			protocol: this.protocol,
 			options: this.options,
-			write: this.writeData
+			write: this.writeData,
+			timeout: this.timeout
 		});
-		if (Atomics.wait(controlBufferArray, 0, 0, this.timeout) === 'timed-out') {
+		if (Atomics.wait(controlBufferArray, 0, 0, this.read_timeout) === 'timed-out') {
 			throw "Transfer request options error";
 		}
 		if (debug) console.info("Request send...");

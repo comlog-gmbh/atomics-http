@@ -9,7 +9,6 @@ const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const BufferWriter_1 = __importDefault(require("./BufferWriter"));
 const AgentHandler_1 = require("./AgentHandler");
-var read_timeout = 90000;
 // Shared memory
 const bufArray = {
     error: {
@@ -111,7 +110,8 @@ class ClientRequest {
         this.options = {};
         this.protocol = 'http:';
         this.writer = null;
-        this.timeout = read_timeout;
+        this.read_timeout = 10000;
+        this.timeout = undefined;
         this.writeData = [];
     }
     _request() {
@@ -142,9 +142,10 @@ class ClientRequest {
             cmd: 'request',
             protocol: this.protocol,
             options: this.options,
-            write: this.writeData
+            write: this.writeData,
+            timeout: this.timeout
         });
-        if (Atomics.wait(controlBufferArray, 0, 0, this.timeout) === 'timed-out') {
+        if (Atomics.wait(controlBufferArray, 0, 0, this.read_timeout) === 'timed-out') {
             throw "Transfer request options error";
         }
         if (debug)

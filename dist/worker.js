@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const worker_threads_1 = require("worker_threads");
 const BufferWriter_1 = __importDefault(require("./BufferWriter"));
+const AtomicsHttpError_1 = __importDefault(require("./AtomicsHttpError"));
 const AgentHandler_1 = require("./AgentHandler");
 const response_fields = {
     httpVersionMajor: null,
@@ -126,6 +127,18 @@ if (worker_threads_1.parentPort) {
                         Atomics.notify(controlBufferArray, 0, 1);
                     }
                 });
+                if (data.timeout)
+                    request.setTimeout(data.timeout);
+                if (data.options.readTimeout) {
+                    request.on('socket', function (socket) {
+                        socket.setTimeout(data.options.readTimeout);
+                        socket.on('timeout', function () {
+                            let err = new AtomicsHttpError_1.default('Read timed out from socket');
+                            err.code = 'ESOCKETTIMEDOUT';
+                            request.destroy(err);
+                        });
+                    });
+                }
                 if (data.write) {
                     for (let w in data.write) {
                         let row = data.write[w];

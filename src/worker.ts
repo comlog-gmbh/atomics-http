@@ -1,6 +1,7 @@
 import {ClientRequest, IncomingMessage} from "http";
 import {parentPort, workerData} from "worker_threads";
 import BufferWriter from './BufferWriter';
+import AtomicsHttpError from './AtomicsHttpError';
 import {adapterToAgent} from './AgentHandler';
 
 const response_fields = {
@@ -135,6 +136,18 @@ if (parentPort) {
 						Atomics.notify(controlBufferArray, 0, 1);
 					}
 				});
+
+				if (data.timeout) request.setTimeout(data.timeout);
+				if (data.options.readTimeout) {
+					request.on('socket', function (socket) {
+						socket.setTimeout(data.options.readTimeout);
+						socket.on('timeout', function() {
+							let err = new AtomicsHttpError('Read timed out from socket');
+							err.code = 'ESOCKETTIMEDOUT';
+							request.destroy(err);
+						});
+					});
+				}
 
 				if (data.write) {
 					for (let w in data.write) {

@@ -3,6 +3,7 @@ atomics-http is a Node.js extension that provides synchronous http or https call
 No dependency and very fast. Worker and Atomics based.
 
 ## Changes
+* 2022-03-15 readTimeout property added
 * 2022-03-14 Added write function for POST requests
 * 2022-03-11 Added support for Functions (using eval)
 * 2022-03-11 Bugfixes
@@ -152,6 +153,14 @@ try {
 
 ## ExtraOptions
 * autoCloseWorker => bool (false = no close, true = close after end) or int (milliseconds)
+* readTimeout => int milliseconds for reading data
+
+## Methods of ClientRequest
+* write
+* end
+* pipe
+* setTimeout
+* closeWorker
 
 ## Benchmark 100 Requests
 | Method          | Time    |

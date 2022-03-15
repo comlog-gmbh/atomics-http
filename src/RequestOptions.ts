@@ -22,6 +22,7 @@ interface RequestOptions {
 	agent?: AgentAdapter | Agent | boolean | undefined;
 	_defaultAgent?: Agent | undefined;
 	timeout?: number | undefined;
+	readTimeout?: number | undefined;
 	setHost?: boolean | undefined;
 	createConnection?: ((options: ClientRequestArgs, oncreate: (err: Error, socket: Socket) => void) => Socket) | undefined;
 	lookup?: LookupFunction | undefined;
