@@ -1,6 +1,6 @@
 # atomics-http
 atomics-http is a Node.js extension that provides synchronous http or https calls.
-No dependency and very fast. Worker and Atomics based.
+Minimal dependency and very fast. Worker and Atomics based.
 
 ## Changes
 + 2022-04-07 Typescript optimized
@@ -29,14 +29,14 @@ npm install atomics-http
 ## Using
 ### Default http compatibility
 ```javascript
-const ahttp = require('atomics-http').http;
+const {https} = require('../dist/main');
 // OR 
-// const ahttps = require('atomics-http').https;
+// const {http} = require('../dist/main');
  
-var request = ahttp.request({
+var request = https.request({
     method: 'GET',
     headers: {},
-    protocol: 'http:',
+    protocol: 'https:',
     host: '127.0.0.1',
     port: 80,
     path: '/'
@@ -54,11 +54,11 @@ try {
 
 ### Default http compatibility 2
 ```javascript
-const ahttp = require('atomics-http').http;
+const {https} = require('../dist/main');
 // OR 
-// const ahttps = require('atomics-http').https;
+// const {http} = require('../dist/main');
 
-var request = ahttp.request('http://localhost/');
+var request = https.request('https://example.com/');
 
 request.setTimeout(10000);
 
@@ -73,11 +73,11 @@ try {
 
 ### Autoclose worker (6 times slower!)
 ```javascript
-const ahttp = require('atomics-http').http;
+const {https} = require('../dist/main');
 // OR 
-// const ahttps = require('atomics-http').https;
+// const {http} = require('../dist/main');
 
-var request = ahttp.request('http://localhost/', {autoCloseWorker: true});
+var request = https.request('https://example.com/', {autoCloseWorker: true});
 
 request.setTimeout(10000);
 
@@ -93,11 +93,12 @@ try {
 
 ### Autoclose worker by inactivity (best way!)
 ```javascript
-const ahttp = require('atomics-http').http;
+const {https} = require('../dist/main');
 // OR 
-// const ahttps = require('atomics-http').https;
+// const {http} = require('../dist/main');
+
 var time = 10000; // 10 Seconds 
-var request = ahttp.request('http://localhost/', {autoCloseWorker: time});
+var request = https.request('https://example.com/', {autoCloseWorker: time});
 
 try {
 	var result = request.end();
@@ -111,6 +112,10 @@ try {
 
 ### POST Request
 ```javascript
+const {https} = require('../dist/main');
+// OR 
+// const {http} = require('../dist/main');
+
 var params = new URLSearchParams({
 	'tset1' : 'test%*&',
 	'test2': true,
@@ -118,8 +123,8 @@ var params = new URLSearchParams({
 })
 var post_data = params.toString();
 
-var req = httpSync.request({
-	url: 'http://localhost/example.php',
+var req = https.request({
+	url: 'https://example.com/example.php',
 	method: 'POST',
 	headers: {
 		'Content-Type': 'application/x-www-form-urlencoded',
@@ -132,13 +137,40 @@ console.info(result.body.toString());
 console.info(result.response);
 ```
 
+### Fileupload
+```javascript
+const {https} = require('../dist/main');
+// OR 
+// const {http} = require('../dist/main');
+
+var {FormDataStream} = require('form-data-stream');
+
+var postData = new FormDataStream();
+postData.set('test', 'abc');
+postData.setFile('file1', './dummy.txt');
+
+var options = {
+	method: 'POST',
+	headers: postData.headers()
+};
+
+let url = 'https://example.com/upload.php';
+var req = https.request(url, options);
+
+postData.pipeSync(req);
+
+var result = req.end();
+console.info(result.body.toString());
+//console.info(result.response);
+```
+
 ### Download file
 ```javascript
 const ahttp = require('atomics-http').http;
 // OR 
 // const ahttps = require('atomics-http').https;
 
-var request = httpSync.request('http://localhost/file.txt');
+var request = httpSync.request('https://example.com/file.txt');
 
 const file = fs.createWriteStream("file.txt");
 request.pipe(file);
@@ -156,7 +188,18 @@ try {
 ```
 
 ## All examples
-...
+* [cache agent request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/cache-agent-request.js)
+* [cache-agent request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/cache-agent-request.js)
+* [cache and proxy agent request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/cache-and-proxy-agent-request.js)
+* [download request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/download-request.js)
+* [manual form data request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/manual-form-data-request.js)
+* [manual post request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/manual-post-request.js)
+* [manual upload bigfile request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/manual-upload-bigfile-request.js)
+* [manual upload request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/manual-upload-request.js)
+* [post request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/post-request.js)
+* [proxy agent request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/proxy-agent-request.js)
+* [simple request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/simple-request.js)
+* [upload request](https://github.com/comlog-gmbh/atomics-http/blob/default/examples/upload-request.js)
 
 ## ExtraOptions
 * autoCloseWorker => bool (false = no close, true = close after end) or int (milliseconds)
