@@ -1,4 +1,4 @@
-type ServerResponse = {
+export type ServerResponse = {
 	httpVersionMajor?: number;
 	httpVersionMinor?: number;
 	httpVersion?: string;
@@ -13,9 +13,7 @@ type ServerResponse = {
 	statusMessage?: string;
 }
 
-type Response = {
+export type Response = {
 	response: ServerResponse | null;
 	body: Buffer|string|null;
 }
-
-export {ServerResponse, Response};

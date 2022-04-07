@@ -2,7 +2,7 @@ import {ClientRequestArgs, OutgoingHttpHeaders, Agent} from "http";
 import {AgentAdapter} from "./AgentHandler";
 import {LookupFunction, Socket} from "net";
 
-interface RequestOptions {
+export interface RequestOptions {
 	autoCloseWorker?: boolean|number;
 	url?:string;
 	signal?: AbortSignal | undefined;
@@ -26,7 +26,5 @@ interface RequestOptions {
 	setHost?: boolean | undefined;
 	createConnection?: ((options: ClientRequestArgs, oncreate: (err: Error, socket: Socket) => void) => Socket) | undefined;
 	lookup?: LookupFunction | undefined;
+	debug?: boolean
 }
-
-
-export = RequestOptions;

@@ -14,9 +14,15 @@
 		"skipLibCheck": true,
 		"outDir": "dist",
 		"rootDir": "src",
-		"sourceMap": true
+		"sourceMap": true,
+		"declaration": true,
+		"typeRoots": [
+			"./@types",
+			"./node_modules/@types"
+		],
+
 	},
 	"compileOnSave": false,
-	"exclude": [ "./**.js", "./src/**/*.bak.ts" ],
+	"exclude": [ "./**.js", "./src/**/*.bak.ts", "node_modules"],
 	"include": [ "./src/**/*.ts" ]
 }

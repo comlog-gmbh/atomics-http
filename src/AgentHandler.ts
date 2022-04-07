@@ -1,14 +1,13 @@
 import Path from "path";
 import FS from "fs";
 import {Agent} from "http";
-import {type} from "os";
 
-interface AgentAdapter {
+export interface AgentAdapter {
 	options: Object; // Agent settings
 	construct: string | Function; // Eval function return Adapter
 }
 
-function toAgentAdapter(agent: any) {
+export function toAgentAdapter(agent: any) {
 	if (typeof agent == 'boolean' || !agent) return agent;
 	if (!agent.construct) {
 		let constructor = agent.constructor.name.toString();
@@ -27,7 +26,7 @@ function toAgentAdapter(agent: any) {
 	return agent;
 }
 
-function adapterToAgent(adapter?: boolean | AgentAdapter) {
+export function adapterToAgent(adapter?: boolean | AgentAdapter) {
 	if (typeof adapter == 'boolean' || !adapter) return adapter;
 	if (typeof adapter.construct == 'string') {
 		let tmp;
@@ -37,5 +36,3 @@ function adapterToAgent(adapter?: boolean | AgentAdapter) {
 
 	return adapter.construct();
 }
-
-export {AgentAdapter, toAgentAdapter, adapterToAgent};

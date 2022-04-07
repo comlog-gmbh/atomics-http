@@ -1,37 +1,34 @@
 "use strict";
 function cleanup(url, options) {
-    var res = { options: {} }, i;
-    if (!options || options.constructor !== Object)
-        res.options = {};
-    else
-        res.options = Object.assign({}, options);
+    var res = {}, i;
+    if (options)
+        res = Object.assign({}, options);
     if (typeof url === 'string') {
         let URL = require('url');
         let parsed = URL.parse(url);
         for (i in parsed) {
             // @ts-ignore
-            if (typeof res.options[i] == "undefined" && typeof parsed[i] != "function") {
-                // @ts-ignore
-                res.options[i] = parsed[i];
-            }
+            if (typeof parsed[i] == 'function')
+                continue;
+            // @ts-ignore
+            if (typeof res[i] == "undefined")
+                res[i] = parsed[i];
         }
     }
     else if (url.constructor === Object) {
-        res.options = Object.assign(res.options, url);
-        if (res.options.url) {
+        res = Object.assign(res, url);
+        if (res.url) {
             let URL = require('url');
-            let parsed = URL.parse(res.options.url);
-            if (!options)
-                options = {};
+            let parsed = URL.parse(res.url);
             for (i in parsed) {
                 // @ts-ignore
                 if (typeof parsed[i] == 'function')
                     continue;
                 // @ts-ignore
-                if (typeof res.options[i] == "undefined")
-                    res.options[i] = parsed[i];
+                if (typeof res[i] == "undefined")
+                    res[i] = parsed[i];
             }
-            delete res.options.url;
+            delete res.url;
         }
     }
     return res;
