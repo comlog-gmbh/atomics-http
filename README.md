@@ -29,9 +29,9 @@ npm install atomics-http
 ## Using
 ### Default http compatibility
 ```javascript
-const {https} = require('../dist/main');
+const {https} = require('atomics-http');
 // OR 
-// const {http} = require('../dist/main');
+// const {http} = require('atomics-http');
  
 var request = https.request({
     method: 'GET',
@@ -54,9 +54,9 @@ try {
 
 ### Default http compatibility 2
 ```javascript
-const {https} = require('../dist/main');
+const {https} = require('atomics-http');
 // OR 
-// const {http} = require('../dist/main');
+// const {http} = require('atomics-http');
 
 var request = https.request('https://example.com/');
 
@@ -73,9 +73,9 @@ try {
 
 ### Autoclose worker (6 times slower!)
 ```javascript
-const {https} = require('../dist/main');
+const {https} = require('atomics-http');
 // OR 
-// const {http} = require('../dist/main');
+// const {http} = require('atomics-http');
 
 var request = https.request('https://example.com/', {autoCloseWorker: true});
 
@@ -93,9 +93,9 @@ try {
 
 ### Autoclose worker by inactivity (best way!)
 ```javascript
-const {https} = require('../dist/main');
+const {https} = require('atomics-http');
 // OR 
-// const {http} = require('../dist/main');
+// const {http} = require('atomics-http');
 
 var time = 10000; // 10 Seconds 
 var request = https.request('https://example.com/', {autoCloseWorker: time});
@@ -112,9 +112,9 @@ try {
 
 ### POST Request
 ```javascript
-const {https} = require('../dist/main');
+const {https} = require('atomics-http');
 // OR 
-// const {http} = require('../dist/main');
+// const {http} = require('atomics-http');
 
 var params = new URLSearchParams({
 	'tset1' : 'test%*&',
@@ -139,9 +139,9 @@ console.info(result.response);
 
 ### Fileupload
 ```javascript
-const {https} = require('../dist/main');
+const {https} = require('atomics-http');
 // OR 
-// const {http} = require('../dist/main');
+// const {http} = require('atomics-http');
 
 var {FormDataStream} = require('form-data-stream');
 
