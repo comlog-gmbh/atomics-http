@@ -1,5 +1,4 @@
 /// <reference types="node" />
-/// <reference types="node" />
 import { ClientRequest } from "http";
 interface WriteType {
     type: string;
