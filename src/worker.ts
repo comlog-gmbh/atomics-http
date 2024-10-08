@@ -20,11 +20,6 @@ const response_fields = {
 	statusMessage: null
 };
 
-type BufferBlock = {
-	writer: BufferWriter;
-	array?:  Int32Array;
-};
-
 // Shared memory
 const bufArray: {[index: string]:BufferWriter} = {
 	error: new BufferWriter(),

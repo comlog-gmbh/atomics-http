@@ -13,8 +13,7 @@ export class AtomicsHTTP {
 	request(url:string|RequestOptions, options?: RequestOptions) : ClientRequest {
 		let cres = cleanup(url, options);
 		if (typeof cres.autoCloseWorker == "undefined") cres.autoCloseWorker = this.autoCloseWorker;
-		let client = new ClientRequest(this.protocol, cres);
-		return client;
+		return new ClientRequest(this.protocol, cres);
 	}
 }
 

@@ -1,6 +1,6 @@
 /// <reference types="node" />
 declare const _default: {
-    new (message?: string | undefined): {
+    new (message?: string): {
         code: any;
         name: string;
         message: string;

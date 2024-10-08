@@ -3,3 +3,6 @@
 /.idea/
 /src/
 /examples/
+/test/benchmark.js
+/test/concurente.js
+/test/test.txt

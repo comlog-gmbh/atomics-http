@@ -1,4 +1,6 @@
 /// <reference types="node" />
+/// <reference types="node" />
+/// <reference types="node" />
 import { ClientRequestArgs, OutgoingHttpHeaders, Agent } from "http";
 import { AgentAdapter } from "./AgentHandler";
 import { LookupFunction, Socket } from "net";

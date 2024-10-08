@@ -5,29 +5,11 @@ var httpSync = require('../dist/main').http;
 var httpsSync = require('../dist/main').https;
 
 var type = 'text'; // text | download
+var time;
 
 if (type == 'text') {
 	var requests = 100;
 	var url = 'https://localtest.speedorder.de/ar/request-analyzer.php?gettest=abc';
-
-	function speedtest_async(cnt, cb) {
-		if (cnt < requests) {
-			var req = https.request(
-				url,
-				function (res) {
-					var data = '';
-					res.on('data', function (chunk) {
-						data += chunk;
-					});
-					res.on('end', function () {
-						speedtest_async(cnt+1, cb);
-					})
-				}
-			);
-			req.end();
-		}
-		else cb();
-	}
 
 	function speedtest_sync(cnt, cb) {
 		if (cnt < requests) {
@@ -47,19 +29,16 @@ if (type == 'text') {
 		else cb();
 	}
 
-	var time = (new Date).getTime();
-	speedtest_async(0, function () {
-		console.info("async:"+((new Date).getTime()-time));
-
-		time = (new Date).getTime();
-		speedtest_sync(0, function () {
-			console.info("sync:"+((new Date).getTime()-time));
-			time = (new Date).getTime();
-			speedtest_sync_autoclose(0, function () {
-				console.info("sync_autoclose:"+((new Date).getTime()-time));
-			});
-		});
-	});
+	for (var c=0; c < 10; c++) {
+		(function (count){
+			setTimeout(function () {
+				var localtime = (new Date).getTime();
+				speedtest_sync(0, function () {
+					console.info("sync"+count+":"+((new Date).getTime()-localtime));
+				});
+			}, 1);
+		})(c)
+	}
 }
 
 if (type == 'download') {
