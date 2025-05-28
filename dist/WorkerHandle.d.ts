@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Worker } from "worker_threads";
 import { ClientRequest } from './ClientRequest';
 import { Writable } from "stream";

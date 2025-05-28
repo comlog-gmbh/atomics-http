@@ -15,16 +15,17 @@ class ClientRequest {
         this.options = {};
         this.protocol = 'http:';
         this.writer = null;
-        this.timeout = undefined;
         this.worker = null;
         this.debug = false;
         this.request_send = false;
         this.protocol = protocol;
         let cres = (0, cleanup_1.default)(url, options);
+        // autoCloseWorker übernehmen
         if (cres.autoCloseWorker) {
             this.autoCloseWorker = cres.autoCloseWorker;
             delete cres.autoCloseWorker;
         }
+        // Debug übernehmen
         if (cres.debug) {
             this.debug = cres.debug;
             delete cres.debug;
@@ -59,7 +60,7 @@ class ClientRequest {
             cmd: 'request',
             protocol: this.protocol,
             options: this.options,
-            timeout: this.timeout
+            timeout: this.options.timeout
         });
         if (error)
             throw error;
@@ -122,7 +123,7 @@ class ClientRequest {
             this.worker.close();
     }
     setTimeout(ms) {
-        this.timeout = ms;
+        this.options.timeout = ms;
     }
 }
 exports.ClientRequest = ClientRequest;

@@ -1,12 +1,11 @@
-/// <reference types="node" />
 declare const _default: {
-    new (message?: string | undefined): {
+    new (message?: string): {
         code: any;
         name: string;
         message: string;
-        stack?: string | undefined;
+        stack?: string;
     };
-    captureStackTrace(targetObject: object, constructorOpt?: Function | undefined): void;
+    captureStackTrace(targetObject: object, constructorOpt?: Function): void;
     prepareStackTrace?: ((err: Error, stackTraces: NodeJS.CallSite[]) => any) | undefined;
     stackTraceLimit: number;
 };

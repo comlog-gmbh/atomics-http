@@ -16,7 +16,6 @@ export class ClientRequest {
 	public options: RequestOptions = {} as RequestOptions;
 	public protocol: string = 'http:';
 	public writer : Writable | null = null;
-	public timeout : number | undefined = undefined;
 	public worker: WorkerHandle|null = null;
 	public debug = false;
 	private request_send = false;
@@ -24,14 +23,19 @@ export class ClientRequest {
 	constructor(protocol: 'http:'|'https:', url:string|RequestOptions, options?: RequestOptions) {
 		this.protocol = protocol;
 		let cres = cleanup(url, options);
+
+		// autoCloseWorker übernehmen
 		if (cres.autoCloseWorker) {
 			this.autoCloseWorker = cres.autoCloseWorker;
 			delete cres.autoCloseWorker;
 		}
+
+		// Debug übernehmen
 		if (cres.debug) {
 			this.debug = cres.debug;
 			delete cres.debug;
 		}
+
 		this.options = cres;
 	}
 
@@ -64,7 +68,7 @@ export class ClientRequest {
 			cmd: 'request',
 			protocol: this.protocol,
 			options: this.options,
-			timeout: this.timeout
+			timeout: this.options.timeout
 		});
 
 		if (error) throw error;
@@ -128,6 +132,6 @@ export class ClientRequest {
 	}
 
 	public setTimeout(ms: number) {
-		this.timeout = ms;
+		this.options.timeout = ms;
 	}
 }

@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { RequestOptions } from "./RequestOptions";
 import { Writable } from "stream";
 import { WorkerHandle } from "./WorkerHandle";
@@ -12,7 +11,6 @@ export declare class ClientRequest {
     options: RequestOptions;
     protocol: string;
     writer: Writable | null;
-    timeout: number | undefined;
     worker: WorkerHandle | null;
     debug: boolean;
     private request_send;
