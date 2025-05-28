@@ -56,7 +56,8 @@ class ClientRequest {
                 }
             }
         }
-        let { error, code } = this.worker.postMessageAndWait({
+        //let {error, code} = this.worker.postMessageAndWait({
+        let { error } = this.worker.postMessageAndWait({
             cmd: 'request',
             protocol: this.protocol,
             options: this.options,
@@ -72,7 +73,7 @@ class ClientRequest {
         this._request();
         if (!this.worker)
             throw new Error("No worker found or started!");
-        let { error, code } = this.worker.postMessageAndWait({ cmd: 'end', chunk: chunk, encoding: encoding });
+        let { error, code } = this.worker.postMessageAndWait({ cmd: 'end', chunk: chunk, encoding: encoding }, this.options.timeout);
         if (error)
             throw error;
         error = this.worker.getError();
@@ -114,7 +115,7 @@ class ClientRequest {
         this._request();
         if (!this.worker)
             throw new Error("No worker found or started!");
-        let { error, code } = this.worker.postMessageAndWait({ cmd: 'write', chunk: chunk, encoding: encoding });
+        let { error, code } = this.worker.postMessageAndWait({ cmd: 'write', chunk: chunk, encoding: encoding }, this.options.timeout);
         if (error)
             throw error;
     }

@@ -71,7 +71,7 @@ class WorkerHandle extends worker_threads_1.Worker {
         this.chunk_end = _workerData.chunk_end;
         this.block_end = _workerData.block_end;
         this.debug = _workerData.debug;
-        this.wait_timeout = 30 * 1000;
+        this.wait_timeout = 300 * 1000;
         this.autoCloseWorker = false;
         // Shared memory
         this.controlBufferSize = 1;
@@ -87,7 +87,7 @@ class WorkerHandle extends worker_threads_1.Worker {
         this.controlBufferArray = new Int32Array(this.controlBuffer);
         this.transferBuffer = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * this.transferBufferSize);
         this.transferBufferArray = new Int32Array(this.transferBuffer);
-        var worker = this;
+        const worker = this;
         this.on("message", function (data) {
             if (worker.debug)
                 console.info("Worker MSG:" + JSON.stringify(data));
@@ -108,7 +108,7 @@ class WorkerHandle extends worker_threads_1.Worker {
             worker.error = new Error(data.toString());
             console.error(worker.error);
         });
-        var postData = { cmd: 'buffer', control: this.controlBuffer, transfer: this.transferBuffer };
+        const postData = { cmd: 'buffer', control: this.controlBuffer, transfer: this.transferBuffer };
         //for (let i in this.bufArray) postData[i] = this.bufArray[i].buffer;
         worker.postMessage(postData);
     }
@@ -118,7 +118,7 @@ class WorkerHandle extends worker_threads_1.Worker {
         }
     }
     startAutocloseTimer(timeout) {
-        var _this = this;
+        const _this = this;
         this.stopAutocloseTimer();
         this.autocloseTimer = setTimeout(function () {
             if (!_this.client)
@@ -130,7 +130,12 @@ class WorkerHandle extends worker_threads_1.Worker {
      * @param timeout
      */
     wait(timeout) {
-        timeout = typeof timeout == 'undefined' ? this.wait_timeout : timeout;
+        if (typeof timeout == 'undefined') {
+            if (this.client && this.client.options && this.client.options.timeout)
+                timeout = this.client.options.timeout;
+            else
+                timeout = this.wait_timeout;
+        }
         if (Atomics.wait(this.controlBufferArray, 0, 0, timeout) === 'timed-out') {
             return { error: new Error("Transfer request options error"), code: WorkerCodes.TIMEOUT };
         }
@@ -146,7 +151,6 @@ class WorkerHandle extends worker_threads_1.Worker {
     }
     pipe(qualifair, writer) {
         let end = false, res_err, res_code = WorkerCodes.SUCCESS, i = 0, pi = 0;
-        ;
         do {
             pi++;
             _cleanup_shared_array(this.transferBufferArray);
@@ -174,7 +178,7 @@ class WorkerHandle extends worker_threads_1.Worker {
         let buf = this.read('error');
         if (buf.length < 1)
             return null;
-        var estr = buf.toString();
+        const estr = buf.toString();
         if (estr != 'null' && estr !== '') {
             let edata = JSON.parse(estr);
             let error = new Error(edata.message);
@@ -207,7 +211,8 @@ class WorkerHandle extends worker_threads_1.Worker {
         }
     }
     write(chunk, encoding) {
-        let { error, code } = this.postMessageAndWait({ cmd: 'write', encoding: encoding });
+        let { error } = this.postMessageAndWait({ cmd: 'write', encoding: encoding, data: chunk });
+        //let {error, code} = this.postMessageAndWait({cmd: 'write', encoding: encoding});
         if (error)
             throw error;
     }
@@ -219,8 +224,10 @@ class WorkerHandle extends worker_threads_1.Worker {
                 worker.client = client;
             }
         }
-        if (!worker)
+        if (!worker) {
             worker = new WorkerHandle(__dirname + path_1.default.sep + 'worker.js');
+            worker.client = client;
+        }
         return worker;
     }
 }

@@ -40,7 +40,7 @@ class WorkerHandle extends Worker {
 	block_end = _workerData.block_end;
 	debug = _workerData.debug;
 	error?:Error;
-	wait_timeout = 30 * 1000;
+	wait_timeout = 300 * 1000;
 
 	autoCloseWorker: number|boolean = false;
 
@@ -73,7 +73,7 @@ class WorkerHandle extends Worker {
 		this.transferBuffer = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * this.transferBufferSize);
 		this.transferBufferArray = new Int32Array(this.transferBuffer);
 
-		var worker = this;
+		const worker = this;
 		this.on("message", function (data: any) {
 			if (worker.debug) console.info("Worker MSG:"+JSON.stringify(data));
 		});
@@ -93,7 +93,7 @@ class WorkerHandle extends Worker {
 			console.error(worker.error);
 		});
 
-		var postData: {[index: string]:any} = {cmd:'buffer', control: this.controlBuffer, transfer: this.transferBuffer};
+		const postData: {[index: string]:any} = {cmd:'buffer', control: this.controlBuffer, transfer: this.transferBuffer};
 		//for (let i in this.bufArray) postData[i] = this.bufArray[i].buffer;
 
 		worker.postMessage(postData);
@@ -106,7 +106,7 @@ class WorkerHandle extends Worker {
 	}
 
 	startAutocloseTimer(timeout: number) {
-		var _this = this;
+		const _this = this;
 		this.stopAutocloseTimer();
 		this.autocloseTimer = setTimeout(function () {
 			if (!_this.client) _this.close();
@@ -118,7 +118,12 @@ class WorkerHandle extends Worker {
 	 * @param timeout
 	 */
 	wait(timeout?: number) : WaitResult {
-		timeout = typeof timeout == 'undefined' ? this.wait_timeout : timeout;
+		if (typeof timeout == 'undefined') {
+			if (this.client && this.client.options && this.client.options.timeout)
+				timeout = this.client.options.timeout;
+			else
+				timeout = this.wait_timeout;
+		}
 
 		if (Atomics.wait(this.controlBufferArray, 0, 0, timeout) === 'timed-out') {
 			return {error: new Error("Transfer request options error"), code: WorkerCodes.TIMEOUT};
@@ -143,7 +148,7 @@ class WorkerHandle extends Worker {
 			res_err: Error|null,
 			res_code = WorkerCodes.SUCCESS,
 			i = 0,
-			pi = 0;
+			pi = 0
 		;
 
 		do {
@@ -179,7 +184,7 @@ class WorkerHandle extends Worker {
 		let buf = this.read('error');
 		if (buf.length < 1) return null;
 
-		var estr = buf.toString();
+		const estr = buf.toString();
 		if (estr != 'null' && estr !== '') {
 			let edata: {[index: string]:any} = JSON.parse(estr);
 			let error = new Error(edata.message);
@@ -215,9 +220,10 @@ class WorkerHandle extends Worker {
 			}
 		}
 	}
-	
-	write(chunk: string|Buffer, encoding?: string) {
-		let {error, code} = this.postMessageAndWait({cmd: 'write', encoding: encoding});
+
+	write(chunk: string|Buffer, encoding?: string): void {
+		let {error} = this.postMessageAndWait({cmd: 'write', encoding: encoding, data: chunk});
+		//let {error, code} = this.postMessageAndWait({cmd: 'write', encoding: encoding});
 		if (error) throw error;
 	}
 
@@ -229,7 +235,10 @@ class WorkerHandle extends Worker {
 				worker.client = client;
 			}
 		}
-		if (!worker) worker = new WorkerHandle(__dirname+path.sep+'worker.js');
+		if (!worker) {
+			worker = new WorkerHandle(__dirname+path.sep+'worker.js');
+			worker.client = client;
+		}
 
 		return worker;
 	}
