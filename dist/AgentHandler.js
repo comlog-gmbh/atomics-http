@@ -3,8 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.toAgentAdapter = toAgentAdapter;
-exports.adapterToAgent = adapterToAgent;
+exports.adapterToAgent = exports.toAgentAdapter = void 0;
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 function toAgentAdapter(agent) {
@@ -25,6 +24,7 @@ function toAgentAdapter(agent) {
     }
     return agent;
 }
+exports.toAgentAdapter = toAgentAdapter;
 function adapterToAgent(adapter) {
     if (typeof adapter == 'boolean' || !adapter)
         return adapter;
@@ -36,4 +36,5 @@ function adapterToAgent(adapter) {
         throw new Error("adapter.construct is not a function!");
     return adapter.construct();
 }
+exports.adapterToAgent = adapterToAgent;
 //# sourceMappingURL=AgentHandler.js.map

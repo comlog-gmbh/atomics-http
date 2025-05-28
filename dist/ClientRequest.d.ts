@@ -1,3 +1,4 @@
+/// <reference types="node" />
 import { RequestOptions } from "./RequestOptions";
 import { Writable } from "stream";
 import { WorkerHandle } from "./WorkerHandle";

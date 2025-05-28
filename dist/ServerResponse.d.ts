@@ -1,4 +1,5 @@
-export type ServerResponse = {
+/// <reference types="node" />
+export declare type ServerResponse = {
     httpVersionMajor?: number;
     httpVersionMinor?: number;
     httpVersion?: string;
@@ -12,7 +13,7 @@ export type ServerResponse = {
     statusCode?: number;
     statusMessage?: string;
 };
-export type Response = {
+export declare type Response = {
     response: ServerResponse | null;
     body: Buffer | string | null;
 };
