@@ -126,7 +126,11 @@ class WorkerHandle extends Worker {
 		}
 
 		if (Atomics.wait(this.controlBufferArray, 0, 0, timeout) === 'timed-out') {
-			return {error: new Error("Transfer request options error"), code: WorkerCodes.TIMEOUT};
+			const err = new Error('Socket timeout');
+			(err as any).code = 'ETIMEDOUT';
+			(err as any).errno = 'ETIMEDOUT';
+			(err as any).syscall = 'connect';
+			return { error: err, code: WorkerCodes.TIMEOUT};
 		}
 
 		if (this.controlBufferArray[0] == WorkerCodes.ERROR) {
